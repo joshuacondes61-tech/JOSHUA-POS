@@ -1,4 +1,4 @@
-# JOSHUA-POS
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -317,208 +317,23 @@ hr{border:0;border-top:1px solid var(--border);margin:14px 0}
 
 <script>
 "use strict";
-const KEY="emeraldSariSari_v2";
+const KEY="emeraldSariSari_v1";
 const $=id=>document.getElementById(id);
 const money=n=>"₱"+Number(n||0).toLocaleString("en-PH",{minimumFractionDigits:2,maximumFractionDigits:2});
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const today=()=>new Date().toISOString().slice(0,10);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const localDate=s=>s?new Date(s.length===10?s+"T12:00:00":s).toLocaleDateString("en-PH"):"—";
-
-const defaultProducts = [
-  { name: "COCA COLA 1L", category: "Beverages", cost: 30.00, price: 45.00, stock: 9, barcode: "" },
-  { name: "MILO", category: "Others", cost: 108.00, price: 11.00, stock: 4, barcode: "" },
-  { name: "MEGA SARDINES", category: "Canned goods", cost: 25.00, price: 25.00, stock: 5, barcode: "" },
-  { name: "MAGIC SARAP", category: "Others", cost: 4.00, price: 6.00, stock: 0, barcode: "" },
-  { name: "KOPIKO BLANCA", category: "Others", cost: 67.00, price: 16.00, stock: 6, barcode: "" },
-  { name: "PEPSI GAMAY", category: "Beverages", cost: 9.00, price: 10.00, stock: 6, barcode: "" },
-  { name: "COKE GAMAY", category: "Beverages", cost: 5.00, price: 10.00, stock: 6, barcode: "" },
-  { name: "ENERGEN", category: "Others", cost: 5.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "KERATIN SHAMPOO", category: "Personal care", cost: 67.00, price: 78.00, stock: 7, barcode: "" },
-  { name: "KERATIN CONDITIONER", category: "Personal care", cost: 76.00, price: 87.00, stock: 0, barcode: "" },
-  { name: "STING", category: "Beverages", cost: 67.00, price: 67.00, stock: 5, barcode: "" },
-  { name: "YAKULT", category: "Beverages", cost: 67.00, price: 67.00, stock: 10, barcode: "" },
-  { name: "MIK MIK", category: "Snacks", cost: 76.00, price: 78.00, stock: 7, barcode: "4809010524409" },
-  { name: "MOUNTAIN DEW BOTTLE", category: "Beverages", cost: 67.00, price: 67.00, stock: 7, barcode: "" },
-  { name: "ROYAL PLASTIC", category: "Beverages", cost: 67.00, price: 67.00, stock: 56, barcode: "" },
-  { name: "MOUNTAIN DEW PLASTIC", category: "Beverages", cost: 67.00, price: 67.00, stock: 5, barcode: "" },
-  { name: "ROYAL 1 LTR", category: "Beverages", cost: 67.00, price: 67.00, stock: 5, barcode: "" },
-  { name: "ROYAL BOTTLE", category: "Beverages", cost: 67.00, price: 67.00, stock: 9, barcode: "" },
-  { name: "TANDUAY LIGHT SR.", category: "Beverages", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "TANDUAY LIGHT JR.", category: "Beverages", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "TANDUAY LIGHT LONG NECK", category: "Beverages", cost: 67.00, price: 67.00, stock: 67, barcode: "" },
-  { name: "TANDUAY DARK", category: "Beverages", cost: 67.00, price: 67.00, stock: 67, barcode: "" },
-  { name: "GENEBRA ROUND", category: "Beverages", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "GENEBRA", category: "Beverages", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "EMPERADOR LIGHT JR.", category: "Beverages", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "EMPERADOR LIGHT SR.", category: "Beverages", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "YOUNGSTOWN SARDINES", category: "Canned goods", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "LUCK7 SARDINES", category: "Canned goods", cost: 67.00, price: 67.00, stock: 67, barcode: "" },
-  { name: "FAMILY SARDINES", category: "Canned goods", cost: 67.00, price: 67.00, stock: 56, barcode: "" },
-  { name: "ARGENTINA CORNED BEEF", category: "Canned goods", cost: 67.00, price: 67.00, stock: 67, barcode: "" },
-  { name: "LUCK 7 CORNED BEEF", category: "Canned goods", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "MEATY CORNED BEEF", category: "Canned goods", cost: 67.00, price: 67.00, stock: 67, barcode: "" },
-  { name: "ARGENTINA BEEF LOAF", category: "Canned goods", cost: 67.00, price: 67.00, stock: 67, barcode: "" },
-  { name: "FIESTA BEEFLOAF", category: "Canned goods", cost: 67.00, price: 67.00, stock: 67, barcode: "" },
-  { name: "HOLIDAY BEEFLOAF", category: "Canned goods", cost: 67.00, price: 67.00, stock: 67, barcode: "" },
-  { name: "FRESCA TUNA AFRITADA", category: "Canned goods", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "CENTURY TUNA", category: "Canned goods", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "555 TUNA", category: "Canned goods", cost: 67.00, price: 6.00, stock: 7, barcode: "" },
-  { name: "FRESCA TUNA FLAKES AND OIL", category: "Canned goods", cost: 67.00, price: 67.00, stock: 67, barcode: "" },
-  { name: "FRESCA TUNA ADOBO", category: "Canned goods", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "LUCK ME NOODLES", category: "Snacks", cost: 67.00, price: 6.00, stock: 7, barcode: "" },
-  { name: "LUCKY ME PANCIT CANTON", category: "Snacks", cost: 67.00, price: 6.00, stock: 7, barcode: "" },
-  { name: "LUCKEY ME NOODLES LABUYO", category: "Snacks", cost: 7.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "GREAT TASTE WHITE", category: "Beverages", cost: 5.00, price: 5.00, stock: 0, barcode: "" },
-  { name: "KOPIKO BLANCA TWIN PACK", category: "Beverages", cost: 6.00, price: 7.00, stock: 7, barcode: "" },
-  { name: "KOPIKO BROWN", category: "Beverages", cost: 6.00, price: 7.00, stock: 7, barcode: "7" },
-  { name: "KOPIKO BROWN TWIN PACK", category: "Beverages", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "KOPIKO BLACK", category: "Beverages", cost: 6.00, price: 7.00, stock: 7, barcode: "" },
-  { name: "KOPIKO BLACK TWIN PACK", category: "Beverages", cost: 7.00, price: 7.00, stock: 7, barcode: "" },
-  { name: "NESCAFE CREAMY WHITE", category: "Beverages", cost: 67.00, price: 67.00, stock: 55, barcode: "" },
-  { name: "NESCAFE CREAMY LATTE", category: "Beverages", cost: 67.00, price: 677.00, stock: 6, barcode: "" },
-  { name: "NESCAFE ORIGINAL TWIN PACK", category: "Beverages", cost: 67.00, price: 6.00, stock: 7, barcode: "" },
-  { name: "NESCAFE ORIGINAL", category: "Beverages", cost: 6.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "BEARBRAND", category: "Beverages", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "BIRCH TREE", category: "Beverages", cost: 67.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "BIRCH TREE TWIN PACK", category: "Beverages", cost: 5.00, price: 8.00, stock: 8, barcode: "" },
-  { name: "WINGS POWDER", category: "Household", cost: 67.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "WINGS BAR", category: "Household", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "CHAMPION BAR", category: "Household", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "CHAMPION POWDER", category: "Household", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "TIDE POWDER", category: "Household", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "SURF POWDER", category: "Household", cost: 67.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "SURF BAR", category: "Household", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "TIDE TWIN PACK POWDER", category: "Household", cost: 67.00, price: 67.00, stock: 6, barcode: "" },
-  { name: "ARIEL POWDER", category: "Household", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "ARIEL TWINPACK POWDER", category: "Household", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "JOY DISWASHING LIQUID", category: "Household", cost: 67.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "SURF FABRIC CONDITIONER", category: "Household", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "DOWNY", category: "Household", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "SUNSILK SHAMPOO", category: "Personal care", cost: 6.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "CREAMSILK SHAMPOO", category: "Personal care", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "CREAMSILK CONDITIONER", category: "Personal care", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "CLOSE UP", category: "Personal care", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "HAPPE TOOTHPASTE", category: "Personal care", cost: 66.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "COLGATE TOOTHPASTE", category: "Personal care", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "NESCAFE STICK", category: "Beverages", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "SILVERSWAN TOYO GAMAY", category: "Others", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "SILVERSWAN TOYO DAKO", category: "Others", cost: 4.00, price: 4.00, stock: 4, barcode: "" },
-  { name: "SILVERSWAN SUKA DAKO", category: "Others", cost: 7.00, price: 7.00, stock: 7, barcode: "" },
-  { name: "SILVERSWAN SUKA GAMAY", category: "Others", cost: 4.00, price: 4.00, stock: 4, barcode: "" },
-  { name: "PAPA KETCHUP", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "BANANA KETCHUP", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "DELMONTE TIDBITS", category: "Others", cost: 7.00, price: 7.00, stock: 7, barcode: "" },
-  { name: "CALUMET", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "MISUA", category: "Others", cost: 77.00, price: 7.00, stock: 7, barcode: "" },
-  { name: "CRISPY FRY", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "TASTY FRY", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "BROWN SUGAR 1/4", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "WHITE SUGAR 1/4", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "STAR MARGARINE", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "HANSEL", category: "Snacks", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "COMBI", category: "Snacks", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "FUDGEE BAR", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "REBISCO CRACKERS", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "MAGIC FLAKES", category: "Snacks", cost: 55.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "REBISCO EXTREME", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "TIGER", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "TOPPS", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "BINGO", category: "Snacks", cost: 6.00, price: 6.00, stock: 7, barcode: "" },
-  { name: "FITA", category: "Snacks", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "CALCHEESE", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "WAFELLO", category: "Snacks", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "CRACKLINGS", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "MUNCHER", category: "Snacks", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "YUMSHOTS", category: "Snacks", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "SUPERCRUNCH DAKO", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "NOVA", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "CRACKLINGS GAMAY", category: "Snacks", cost: 5.00, price: 5.00, stock: 6, barcode: "" },
-  { name: "OISHI GAMAY", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "FISH CRACKER", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "MANG JUAN", category: "Snacks", cost: 5.00, price: 5.00, stock: 6, barcode: "" },
-  { name: "POTATOES", category: "Snacks", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "KIREI", category: "Snacks", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "CHEESE RINGS", category: "Snacks", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "EDEN", category: "Others", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "STAR MARGARINE TWIN PACK", category: "Others", cost: 5.00, price: 5.00, stock: 6, barcode: "" },
-  { name: "CHEEZE WIZ TWIN PACK", category: "Others", cost: 67.00, price: 67.00, stock: 0, barcode: "" },
-  { name: "TANG ORANGE", category: "Beverages", cost: 67.00, price: 67.00, stock: 67, barcode: "" },
-  { name: "NESTEA", category: "Beverages", cost: 4.00, price: 5.00, stock: 76, barcode: "" },
-  { name: "TANG PINEAPPLE", category: "Beverages", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "TANG LEMON", category: "Beverages", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "GINISA", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "MANG TOMAS", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "KNOR SINIGANG MIX", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "MAMA SITAS", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "REXONA", category: "Personal care", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "SALON PAS", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "EARTH SCRUB", category: "Household", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "KIWI", category: "Others", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "BUG OFF", category: "Others", cost: 56.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "SHAVE", category: "Personal care", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "HEAD AND SHOULDERS", category: "Personal care", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "PALMOLIVE SHAMPOO", category: "Personal care", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "WAFER", category: "Snacks", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "JAM JAM", category: "Snacks", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "PRITONG BANGUS", category: "Canned goods", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "OK JUICE", category: "Beverages", cost: 7.00, price: 7.00, stock: 7, barcode: "" },
-  { name: "COBRA", category: "Beverages", cost: 6.00, price: 6.00, stock: 6, barcode: "" },
-  { name: "PREMIER", category: "Others", cost: 7.00, price: 7.00, stock: 7, barcode: "" },
-  { name: "JUICY COLOGNE", category: "Personal care", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "ETHYL ALCOHOL", category: "Personal care", cost: 7.00, price: 7.00, stock: 7, barcode: "" },
-  { name: "EFFICASCENT EXTREME", category: "Personal care", cost: 5.00, price: 5.00, stock: 5, barcode: "" },
-  { name: "EFFICASCENT EXTRA STRENGTH", category: "Personal care", cost: 3.00, price: 6.00, stock: 3, barcode: "4" },
-  { name: "ACEITI DE MANZANILLA", category: "Personal care", cost: 3.00, price: 3.00, stock: 3, barcode: "" },
-  { name: "MAMAS LOVE", category: "Personal care", cost: 7.00, price: 7.00, stock: 7, barcode: "" },
-  { name: "SILVERSWAN TOYO PLASTIC", category: "Others", cost: 5.00, price: 5.00, stock: 5, barcode: "" }
-];
-
-const initial=()=>({
-  products: defaultProducts.map(p => ({ ...p, id: uid(), min: 5, expiry: "", image: "" })),
-  sales:[],suppliers:[],purchases:[],expenses:[],utang:[],
-  settings:{name:"EMERALD STORE",address:"",phone:"",footer:"Thank you for shopping!"},
-  dark:false
-});
-
+const initial=()=>({products:[],sales:[],suppliers:[],purchases:[],expenses:[],utang:[],settings:{name:"EMERALD STORE",address:"",phone:"",footer:"Thank you for shopping!"},dark:false});
 let db=loadDB(),cart=[],productImageData="",logoData="",lastReceipt=null,toastTimer;
-
-function loadDB(){
-  try{
-    let saved = localStorage.getItem(KEY);
-    if(!saved) return initial();
-    let parsed = JSON.parse(saved);
-    return {
-      ...initial(),
-      ...parsed,
-      products: parsed.products && parsed.products.length ? parsed.products : initial().products
-    };
-  }catch(e){
-    return initial();
-  }
-}
-
+function loadDB(){try{return {...initial(),...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch(e){return initial()}}
 function saveDB(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){alert("Storage is full. Please remove large images or download a backup, then try again.")}}
-function toast(s){let t=$("toast");if(!t)return;t.textContent=s;t.style.display="block";clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.display="none",2600)}
-function navigate(p){
-  document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id==="page-"+p));
-  document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===p));
-  window.scrollTo({top:0,behavior:"smooth"});
-  if(p==="dashboard")renderDashboard();
-  if(p==="pos"){renderPOS();renderCart()}
-  if(p==="inventory")renderInventory();
-  if(p==="sales")renderSales();
-  if(p==="purchases")renderPurchases();
-  if(p==="suppliers")renderSuppliers();
-  if(p==="utang")renderUtang();
-  if(p==="expenses")renderExpenses();
-  if(p==="reports")renderReports();
-  if(p==="settings")renderSettings();
-}
+function toast(s){$("toast").textContent=s;$("toast").style.display="block";clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("toast").style.display="none",2600)}
+function navigate(p){document.querySelectorAll(".page").forEach(x=>x.classList.toggle("active",x.id==="page-"+p));document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===p));window.scrollTo({top:0,behavior:"smooth"});if(p==="dashboard")renderDashboard();if(p==="pos"){renderPOS();renderCart()}if(p==="inventory")renderInventory();if(p==="sales")renderSales();if(p==="purchases")renderPurchases();if(p==="suppliers")renderSuppliers();if(p==="utang")renderUtang();if(p==="expenses")renderExpenses();if(p==="reports")renderReports();if(p==="settings")renderSettings()}
 function toggleDark(){db.dark=!db.dark;document.body.classList.toggle("dark",db.dark);saveDB();toast(db.dark?"Dark mode enabled":"Light mode enabled")}
 function storeHeader(){let s=db.settings;$("storetitle").textContent=s.name||"EMERALD STORE";$("storetag").textContent=s.address||"Sari-Sari POS & Inventory";if(s.logo){$("toplogo").src=s.logo;$("toplogo").style.display="block";$("logofallback").style.display="none"}else{$("toplogo").style.display="none";$("logofallback").style.display="grid"}}
 function refresh(){storeHeader();renderDashboard();renderPOS();renderCart();renderInventory();renderSales();renderPurchases();renderSuppliers();renderUtang();renderExpenses();renderReports();renderSettings();fillSelects()}
-function fillSelects(){let cats=[...new Set(db.products.map(p=>p.category||"Others"))].sort();["poscat","invcat"].forEach(id=>{let el=$(id);if(!el)return;let old=el.value;el.innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join("");el.value=old});let bp=$("buyproduct");if(bp)bp.innerHTML=db.products.map(p=>`<option value="${p.id}">${esc(p.name)} (Stock: ${p.stock})</option>`).join("")||'<option value="">Add products first</option>';let bs=$("buysupplier");if(bs)bs.innerHTML='<option value="">Unspecified</option>'+db.suppliers.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("")}
+function fillSelects(){let cats=[...new Set(db.products.map(p=>p.category||"Others"))].sort();["poscat","invcat"].forEach(id=>{let el=$(id),old=el.value;el.innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join("");el.value=old});$("buyproduct").innerHTML=db.products.map(p=>`<option value="${p.id}">${esc(p.name)} (Stock: ${p.stock})</option>`).join("")||'<option value="">Add products first</option>';$("buysupplier").innerHTML='<option value="">Unspecified</option>'+db.suppliers.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("")}
 function renderDashboard(){
 let sales=db.sales.filter(s=>s.date===today()),revenue=sales.reduce((a,s)=>a+s.total,0);
 $("todaybadge").textContent=new Date().toLocaleDateString("en-PH",{weekday:"short",month:"short",day:"numeric"});
@@ -533,7 +348,7 @@ $("dashalerts").innerHTML=alerts.join("")||'<div class="empty">✨ Everything lo
 $("dashrecent").innerHTML=sales.length?table(["Time","Receipt","Customer","Payment","Total"],sales.slice().reverse().slice(0,6).map(s=>[esc(s.time||""),esc(s.id),esc(s.customer||"Walk-in"),esc(s.payment),money(s.total)])):'<div class="empty">No sales recorded today.</div>';
 }
 function renderPOS(){
-let q=($("possearch").value\vert{}\vert{}"").toLowerCase(),cat=$("poscat").value;
+let q=($("possearch").value||"").toLowerCase(),cat=$("poscat").value;
 let list=db.products.filter(p=>(p.name+" "+p.barcode+" "+p.category).toLowerCase().includes(q)&&(!cat||p.category===cat));
 $("posproducts").innerHTML=list.map(p=>`<div class="productcard" onclick="addCart('${p.id}')" title="Tap to add"><img src="${p.image||""}" onerror="this.style.visibility='hidden'" alt=""><div class="productinfo"><strong>${esc(p.name)}</strong><small>${p.stock} in stock</small><div class="price">${money(p.price)}</div></div></div>`).join("")||'<div class="empty">No products found. Add products in Inventory.</div>';
 }
@@ -567,7 +382,7 @@ window.scrollTo({top:0,behavior:"smooth"});
 function printSale(id){let s=db.sales.find(x=>x.id===id);if(s){showReceipt(s);setTimeout(()=>window.print(),150)}}
 function table(headers,rows){if(!rows.length)return '<div class="empty">No records found.</div>';return `<div class="tablewrap"><table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(v=>`<td>${v??""}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
 function renderInventory(){
-let q=($("invsearch").value\vert{}\vert{}"").toLowerCase(),cat=$("invcat").value;
+let q=($("invsearch").value||"").toLowerCase(),cat=$("invcat").value;
 let list=db.products.filter(p=>(p.name+" "+p.barcode+" "+p.category).toLowerCase().includes(q)&&(!cat||p.category===cat));
 $("inventorycount").textContent=db.products.length+" products";
 $("inventorytable").innerHTML=table(["Product","Category","Cost","Price","Stock","Status","Actions"],list.map(p=>[
@@ -584,23 +399,23 @@ if(p.price<0||p.cost<0||p.stock<0)return toast("Values cannot be negative.");
 if(p.barcode&&db.products.some(x=>x.barcode===p.barcode&&x.id!==p.id))return toast("That barcode is already assigned.");
 if(old)db.products[db.products.findIndex(x=>x.id===id)]=p;else db.products.push(p);
 saveDB();resetProductForm();refresh();toast(old?"Product updated":"Product added");}
-function editProduct(id){let p=db.products.find(x=>x.id===id);if(!p)return;$("editid").value=p.id;$("pname").value=p.name;$("pcat").value=p.category;$("pcost").value=p.cost;$("pprice").value=p.price;$("pstock").value=p.stock;$("pmin").value=p.min;$("pbarcode").value=p.barcode;$("pexpiry").value=p.expiry\vert{}\vert{}"";productImageData=p.image\vert{}\vert{}"";$("imagepreview").src=p.image||"";$("imagepreview").style.display=p.image?"block":"none";$("productformtitle").textContent="Edit product";$("productformcard").scrollIntoView({behavior:"smooth"})}
+function editProduct(id){let p=db.products.find(x=>x.id===id);if(!p)return;$("editid").value=p.id;$("pname").value=p.name;$("pcat").value=p.category;$("pcost").value=p.cost;$("pprice").value=p.price;$("pstock").value=p.stock;$("pmin").value=p.min;$("pbarcode").value=p.barcode;$("pexpiry").value=p.expiry||"";productImageData=p.image||"";$("imagepreview").src=p.image||"";$("imagepreview").style.display=p.image?"block":"none";$("productformtitle").textContent="Edit product";$("productformcard").scrollIntoView({behavior:"smooth"})}
 function deleteProduct(id){let p=db.products.find(x=>x.id===id);if(p&&confirm("Delete "+p.name+"? Historical sales will be retained.")){db.products=db.products.filter(x=>x.id!==id);cart=cart.filter(x=>x.id!==id);saveDB();refresh();toast("Product deleted")}}
-function renderSales(){if(!$("salestable"))return;let f=$("salesfrom").value,t=$("salesto").value,list=db.sales.filter(s=>(!f\vert{}\vert{}s.date>=f)&&(!t\vert{}\vert{}s.date<=t)).slice().reverse();$("salestable").innerHTML=table(["Date","Receipt","Customer","Payment","Items","Total","Action"],list.map(s=>[localDate(s.date),esc(s.id),esc(s.customer||"Walk-in"),esc(s.payment),s.items.reduce((n,i)=>n+i.qty,0),money(s.total),`<button class="secondary sm" onclick="printSale('${s.id}')">Receipt</button>`]))}
+function renderSales(){if(!$("salestable"))return;let f=$("salesfrom").value,t=$("salesto").value,list=db.sales.filter(s=>(!f||s.date>=f)&&(!t||s.date<=t)).slice().reverse();$("salestable").innerHTML=table(["Date","Receipt","Customer","Payment","Items","Total","Action"],list.map(s=>[localDate(s.date),esc(s.id),esc(s.customer||"Walk-in"),esc(s.payment),s.items.reduce((n,i)=>n+i.qty,0),money(s.total),`<button class="secondary sm" onclick="printSale('${s.id}')">Receipt</button>`]))}
 function saveSupplier(e){e.preventDefault();db.suppliers.push({id:uid(),name:$("supname").value.trim(),contact:$("supcontact").value.trim(),phone:$("supphone").value.trim(),address:$("supaddress").value.trim()});e.target.reset();saveDB();refresh();toast("Supplier saved")}
 function renderSuppliers(){$("suppliertable").innerHTML=table(["Supplier","Contact","Phone","Address","Action"],db.suppliers.map(s=>[esc(s.name),esc(s.contact),esc(s.phone),esc(s.address),`<button class="danger sm" onclick="deleteSupplier('${s.id}')">Delete</button>`]));fillSelects()}
 function deleteSupplier(id){if(confirm("Delete this supplier?")){db.suppliers=db.suppliers.filter(s=>s.id!==id);saveDB();refresh()}}
-function savePurchase(e){e.preventDefault();let p=db.products.find(x=>x.id===$("buyproduct").value),qty=Number($("buyqty").value),cost=Number($("buycost").value);if(!p)return toast("Add a product first");if(qty<1||cost<0)return toast("Enter valid purchase values");p.stock+=qty;p.cost=cost;db.purchases.push({id:uid(),date:$("buydate").value\vert{}\vert{}today(),product:p.name,productId:p.id,supplierId:$("buysupplier").value,qty,cost,total:qty*cost,notes:$("buynotes").value});e.target.reset();$("buydate").value=today();saveDB();refresh();toast("Purchase recorded and stock updated")}
+function savePurchase(e){e.preventDefault();let p=db.products.find(x=>x.id===$("buyproduct").value),qty=Number($("buyqty").value),cost=Number($("buycost").value);if(!p)return toast("Add a product first");if(qty<1||cost<0)return toast("Enter valid purchase values");p.stock+=qty;p.cost=cost;db.purchases.push({id:uid(),date:$("buydate").value||today(),product:p.name,productId:p.id,supplierId:$("buysupplier").value,qty,cost,total:qty*cost,notes:$("buynotes").value});e.target.reset();$("buydate").value=today();saveDB();refresh();toast("Purchase recorded and stock updated")}
 function renderPurchases(){$("purchasetable").innerHTML=table(["Date","Product","Supplier","Qty","Unit cost","Total","Notes"],db.purchases.slice().reverse().map(p=>[localDate(p.date),esc(p.product),esc(db.suppliers.find(s=>s.id===p.supplierId)?.name||"—"),p.qty,money(p.cost),money(p.total),esc(p.notes)]))}
 function saveUtang(e){e.preventDefault();db.utang.push({id:uid(),name:$("utangname").value.trim(),amount:Number($("utangamount").value),paid:0,date:$("utangdate").value||today(),notes:$("utangnotes").value.trim()});e.target.reset();$("utangdate").value=today();saveDB();refresh();toast("Utang recorded")}
 function payUtang(id){let u=db.utang.find(x=>x.id===id);if(!u)return;let balance=u.amount-u.paid;let v=prompt("Enter payment received (balance "+money(balance)+")");if(v===null)return;let amount=Number(v);if(!Number.isFinite(amount)||amount<=0||amount>balance)return toast("Enter a valid payment amount");u.paid+=amount;u.payments=u.payments||[];u.payments.push({date:today(),amount});saveDB();refresh();toast("Payment recorded")}
 function renderUtang(){let balance=db.utang.reduce((n,u)=>n+Math.max(0,u.amount-u.paid),0);$("utangtotal").textContent=money(balance);$("utangcustomers").textContent=new Set(db.utang.filter(u=>u.amount>u.paid).map(u=>u.name.toLowerCase())).size;$("utangtable").innerHTML=table(["Customer","Date","Description","Amount","Paid","Balance","Actions"],db.utang.slice().reverse().map(u=>[esc(u.name),localDate(u.date),esc(u.notes),money(u.amount),money(u.paid),money(Math.max(0,u.amount-u.paid)),`<div class="btnrow"><button class="secondary sm" ${u.amount<=u.paid?"disabled":""} onclick="payUtang('${u.id}')">Record payment</button><button class="danger sm" onclick="deleteUtang('${u.id}')">Delete</button></div>`]))}
 function deleteUtang(id){if(confirm("Delete this utang record?")){db.utang=db.utang.filter(x=>x.id!==id);saveDB();renderUtang()}}
-function saveExpense(e){e.preventDefault();db.expenses.push({id:uid(),name:$("expname").value.trim(),amount:Number($("expamount").value),category:$("expcat").value,date:$("expdate").value\vert{}\vert{}today()});e.target.reset();$("expdate").value=today();saveDB();refresh();toast("Expense saved")}
+function saveExpense(e){e.preventDefault();db.expenses.push({id:uid(),name:$("expname").value.trim(),amount:Number($("expamount").value),category:$("expcat").value,date:$("expdate").value||today()});e.target.reset();$("expdate").value=today();saveDB();refresh();toast("Expense saved")}
 function deleteExpense(id){if(confirm("Delete this expense?")){db.expenses=db.expenses.filter(x=>x.id!==id);saveDB();refresh()}}
 function renderExpenses(){$("expensetable").innerHTML=table(["Date","Description","Category","Amount","Action"],db.expenses.slice().reverse().map(x=>[localDate(x.date),esc(x.name),esc(x.category),money(x.amount),`<button class="danger sm" onclick="deleteExpense('${x.id}')">Delete</button>`]))}
 function setReportRange(days){let d=new Date();$("reportto").value=today();if(days===365){$("reportfrom").value=d.getFullYear()+"-01-01"}else{d.setDate(d.getDate()-days);$("reportfrom").value=d.toISOString().slice(0,10)}renderReports()}
-function inReport(date){return (!$("reportfrom").value\vert{}\vert{}date>=$("reportfrom").value)&&(!$("reportto").value\vert{}\vert{}date<=$("reportto").value)}
+function inReport(date){return (!$("reportfrom").value||date>=$("reportfrom").value)&&(!$("reportto").value||date<=$("reportto").value)}
 function renderReports(){
 if(!$("rRevenue"))return;let sales=db.sales.filter(s=>inReport(s.date)),expenses=db.expenses.filter(x=>inReport(x.date)),revenue=sales.reduce((n,s)=>n+s.total,0),cost=sales.reduce((n,s)=>n+(s.cost??s.items.reduce((a,i)=>a+i.cost*i.qty,0)),0),gross=revenue-cost,exp=expenses.reduce((n,x)=>n+x.amount,0);
 $("rRevenue").textContent=money(revenue);$("rCost").textContent=money(cost);$("rGross").textContent=money(gross);$("rExpenses").textContent=money(exp);$("rNet").textContent=money(gross-exp);
@@ -609,22 +424,14 @@ $("bestproducts").innerHTML=best.map(([name,q])=>`<div style="margin:12px 0"><di
 let methods={};sales.forEach(s=>methods[s.payment]=(methods[s.payment]||0)+s.total);$("paymentreport").innerHTML=Object.entries(methods).map(([k,v])=>`<div class="between" style="padding:10px 0;border-bottom:1px solid var(--border)"><span>${esc(k)}</span><strong>${money(v)}</strong></div>`).join("")||'<div class="empty">No payments recorded.</div>';
 }
 function saveSettings(e){e.preventDefault();db.settings.name=$("settingname").value.trim();db.settings.address=$("settingaddress").value.trim();db.settings.phone=$("settingphone").value.trim();db.settings.footer=$("settingfooter").value.trim();if(logoData)db.settings.logo=logoData;let f=$("settinglogo").files[0];if(f){if(f.size>2*1024*1024)return toast("Logo must be under 2 MB");let r=new FileReader();r.onload=()=>{db.settings.logo=r.result;logoData="";saveDB();refresh();toast("Settings saved")};r.readAsDataURL(f)}else{saveDB();refresh();toast("Settings saved")}}
-function renderSettings(){let s=db.settings;$("settingname").value=s.name\vert{}\vert{}"";$("settingaddress").value=s.address||"";$("settingphone").value=s.phone\vert{}\vert{}"";$("settingfooter").value=s.footer||""}
+function renderSettings(){let s=db.settings;$("settingname").value=s.name||"";$("settingaddress").value=s.address||"";$("settingphone").value=s.phone||"";$("settingfooter").value=s.footer||""}
 function backupData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="sari-sari-backup-"+today()+".json";a.click();URL.revokeObjectURL(a.href);toast("Backup downloaded")}
 function restoreData(){let f=$("restorefile").files[0];if(!f)return toast("Choose a backup JSON file first");if(!confirm("Restore backup? This replaces the current store data."))return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x||!Array.isArray(x.products)||!Array.isArray(x.sales))throw Error("Invalid backup");db={...initial(),...x};saveDB();refresh();toast("Backup restored")}catch(e){alert("Could not restore: invalid backup file.")}};r.readAsText(f)}
 function clearAllData(){if(!confirm("WARNING: permanently delete all store records from this browser?"))return;if(!confirm("Last confirmation: this cannot be undone. Download a backup first if needed."))return;localStorage.removeItem(KEY);db=initial();cart=[];saveDB();refresh();toast("Store data cleared")}
 function exportCSV(){let rows=[["Receipt","Date","Customer","Payment","Subtotal","Discount","Total","Cost","Profit"],...db.sales.map(s=>[s.id,s.date,s.customer,s.payment,s.subtotal,s.discount,s.total,s.cost??s.items.reduce((n,i)=>n+i.cost*i.qty,0),s.total-(s.cost??s.items.reduce((n,i)=>n+i.cost*i.qty,0))])];let csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));a.download="sari-sari-sales-"+today()+".csv";a.click();URL.revokeObjectURL(a.href)}
-
-document.addEventListener("DOMContentLoaded", () => {
-  if($("buydate"))$("buydate").value=today();
-  if($("utangdate"))$("utangdate").value=today();
-  if($("expdate"))$("expdate").value=today();
-  if($("reportto"))$("reportto").value=today();
-  setReportRange(30);
-  document.body.classList.toggle("dark",!!db.dark);
-  storeHeader();
-  refresh();
-});
+$("buydate").value=today();$("utangdate").value=today();$("expdate").value=today();$("reportto").value=today();setReportRange(30);
+document.body.classList.toggle("dark",!!db.dark);
+storeHeader();refresh();
 </script>
 </body>
 </html>
